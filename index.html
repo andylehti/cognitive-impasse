@@ -5,34 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cognitive Dissonance Quiz</title>
 <style>
+  /* Formal paper styling */
   body {
-    font-family: Arial, sans-serif;
+    font-family: Georgia, 'Times New Roman', Times, serif;
     margin: 20px;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: auto;
   }
   #quiz-container {
-    max-width: 600px;
     margin: auto;
     text-align: center;
+    padding: 10px;
   }
   #start-button, .answer-button {
     background-color: white;
     border: 2px solid black;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 18px;
     cursor: pointer;
     margin: 10px;
   }
-  #feedback {
-    font-size: 24px;
-    margin: 20px;
-  }
-  .previous-question {
-    color: gray;
-    margin-top: 10px;
-    font-style: italic;
+  #question {
+    font-size: 22px;
+    margin-bottom: 20px;
   }
   .flash {
-    animation-duration: 0.2s;
+    animation-duration: 0.4s; /* Increased flash duration */
     animation-fill-mode: forwards;
   }
   @keyframes flash-red {
@@ -43,6 +42,25 @@
     from { background-color: white; }
     to { background-color: green; }
   }
+  .incorrect-question {
+    color: gray;
+    margin-top: 10px;
+    font-style: italic;
+  }
+  /* Responsive design for mobile devices */
+  @media (max-width: 600px) {
+    body {
+      font-size: 16px;
+      padding: 10px;
+    }
+    #question {
+      font-size: 20px;
+    }
+    #start-button, .answer-button {
+      font-size: 16px;
+      padding: 8px 16px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -52,60 +70,62 @@
   <button id="start-button">Start</button>
   <div id="question-container" style="display:none;">
     <p id="question"></p>
-    <button class="answer-button" id="true-button">True</button>
-    <button class="answer-button" id="false-button">False</button>
-    <div id="feedback"></div>
-    <div id="previous-questions"></div>
+    <div id="buttons">
+      <button class="answer-button" id="true-button">True</button>
+      <button class="answer-button" id="false-button">False</button>
+    </div>
+    <div id="incorrect-questions"></div>
   </div>
 </div>
 
 <script>
   const quizData = [
+    { statement: "A physicist claims to have successfully developed a method for time travel.", answer: false },
+    { statement: "Historians uncover evidence suggesting the Renaissance was politically fabricated.", answer: false },
+    { statement: "Climate scientists report that global warming has plateaued and is now less urgent.", answer: false },
+    { statement: "Director James Cameron retires from filmmaking to pursue a career in ballet.", answer: false },
+    { statement: "Leading nutritionists assert that excessive sugar intake may benefit long-term health.", answer: true },
+    { statement: "Apple plans to discontinue the iPhone and instead focus on developing Android devices.", answer: false },
+    { statement: "Bananas are classified as berries due to internal seeds; strawberries are not because their seeds are external.", answer: true },
+    { statement: "Octopuses have three hearts: two pump blood to the gills, while one circulates blood to the body and stops when they swim.", answer: true },
+    { statement: "A day on Venus is longer than its year, as it takes 243 Earth days to rotate and only 225 to orbit the Sun.", answer: true },
+    { statement: "The Republicans are predicted to lose the upcoming presidential election.", answer: false },
+    { statement: "The Democrats are predicted to lose the upcoming presidential election.", answer: false },
+    { statement: "Donald Trump reveals he is attracted to both men and women.", answer: false },
+    { statement: "Biden won the election without cheating, securing a fair victory.", answer: true },
+    { statement: "Christians are solely blamed for the downfall of the Roman Empire.", answer: false },
+    { statement: "The name \"Jove\" is pronounced similarly to \"Yahweh.\"", answer: true },
+    { statement: "Atheists display as much ignorance as theists.", answer: true },
+    { statement: "Academics experience cognitive biases at equal levels.", answer: true },
+    { statement: "NASA, along with many others, kept the secret of Operation Paperclip.", answer: true },
+    { statement: "While many consider the Holy Roman Empire the First Reich, the true First Reich was the Roman Empire.", answer: true },
+    { statement: "Julius Caesar was the inspiration for Jesus Christ.", answer: true },
+    { statement: "The Moon Landing was actually a hoax, carefully staged by the U.S. government to win the space race.", answer: true },
+    { statement: "The color photos of the moon landing are of a miniature set, with each astronaut shown as a figurine, firmly held to the set. The flag waved in the video but never moved in the photos, which used a Claymation-like technique to keep the flag up.", answer: true },
+    { statement: "The black-and-white photos of the moon landing are of humans on a flat soundstage.", answer: true },
+    { statement: "The Christian God, Hindu Gods, Buddhist Divines, Jewish Gods, Roman Gods, Greek Gods, Islamic God, Norse Gods, and most other gods came from a primary god called Dyeus Pater, which was the sun.", answer: true },
+    { statement: "The magnetosphere is not bipolar but actually a monopole electromagnetosphere.", answer: true },
+    { statement: "Mass has very little to do with gravity; rather, gravity is inertia interacting with electromagnetic tethers keeping planets and galaxies in line.", answer: true },
+    { statement: "Imaginary numbers do not exist; humans incorrectly applied the index laws.", answer: true },
+    { statement: "Time itself is not linear; it moves in a constant loop, and we are simply experiencing iterations of the same events.", answer: false },
+    { statement: "The government is actually quite competent.", answer: true },
+    { statement: "The Earth is spherical.", answer: true },
+    { statement: "Pluto is the largest planet in the solar system.", answer: false },
+    { statement: "The U.S. imported over 1,600 Nazi S.S. agents to work for the U.S.", answer: true },
+    { statement: "The CIA conducted secret mind-control experiments on unwitting subjects from the 1950s-1970s, using drugs like LSD and other methods in attempts to influence behavior and gather intelligence.", answer: true },
+    { statement: "The FBI ran covert programs in the 1950s-1970s to surveil, infiltrate, and sabotage civil rights groups, anti-war activists, and political dissidents.", answer: true },
     { statement: "The U.S. government exaggerated or fabricated attacks on U.S. ships in 1964 to justify escalation in Vietnam, as later declassified documents revealed.", answer: true },
     { statement: "From 1932-1972, the U.S. Public Health Service withheld treatment from Black men with syphilis, studying the effects of untreated disease without informed consent.", answer: true },
-    { statement: "Tobacco companies knew about the health risks of smoking for decades but hid this information and aggressively marketed cigarettes, downplaying links to cancer and addiction.", answer: true },
-    { statement: "The U.S. imported over 1,600 Nazi S.S. agents to work for the U.S.", answer: true },
-    { statement: "Pluto is the largest planet in the solar system.", answer: false },
-    { statement: "The Earth is spherical.", answer: true },
-    { statement: "The government is actually quite competent.", answer: false },
-    { statement: "Time itself is not linear; it moves in a constant loop, and we are simply experiencing iterations of the same events.", answer: false },
-    { statement: "Imaginary numbers do not exist; humans incorrectly applied the index laws.", answer: false },
-    { statement: "Mass has very little to do with gravity; rather, gravity is inertia interacting with electromagnetic tethers keeping planets and galaxies in line.", answer: false },
-    { statement: "The magnetosphere is not bipolar but actually a monopole electromagnetosphere.", answer: false },
-    { statement: "The Christian God, Hindu Gods, Buddhist Divines, Jewish Gods, Roman Gods, Greek Gods, Islamic God, Norse Gods, and most other gods came from a primary god called Dyeus Pater, which was the sun.", answer: true },
-    { statement: "The black-and-white photos of the moon landing are of humans on a flat soundstage.", answer: true },
-    { statement: "The color photos of the moon landing are of a miniature set, with each astronaut shown as a figurine, firmly held to the set. The flag waved in the video but never moved in the photos, which used a Claymation-like technique to keep the flag up.", answer: true },
-    { statement: "The Moon Landing was actually a hoax, carefully staged by the U.S. government to win the space race.", answer: true },
-    { statement: "Julius Caesar was the inspiration for Jesus Christ.", answer: false },
-    { statement: "While many consider the Holy Roman Empire the First Reich, the true First Reich was the Roman Empire.", answer: false },
-    { statement: "NASA, along with many others, kept the secret of Operation Paperclip.", answer: true },
-    { statement: "Academics experience cognitive biases at equal levels.", answer: true },
-    { statement: "Atheists display as much ignorance as theists.", answer: true },
-    { statement: "The name \"Jove\" is pronounced similarly to \"Yahweh.\"", answer: false },
-    { statement: "Christians are solely blamed for the downfall of the Roman Empire.", answer: false },
-    { statement: "Biden won the election without cheating, securing a fair victory.", answer: true },
-    { statement: "Donald Trump reveals he is attracted to both men and women.", answer: false },
-    { statement: "The Democrats are predicted to lose the upcoming presidential election.", answer: false },
-    { statement: "The Republicans are predicted to lose the upcoming presidential election.", answer: false },
-    { statement: "A day on Venus is longer than its year, as it takes 243 Earth days to rotate and only 225 to orbit the Sun.", answer: true },
-    { statement: "Octopuses have three hearts: two pump blood to the gills, while one circulates blood to the body and stops when they swim.", answer: true },
-    { statement: "Bananas are classified as berries due to internal seeds; strawberries are not because their seeds are external.", answer: true },
-    { statement: "Apple plans to discontinue the iPhone and instead focus on developing Android devices.", answer: false },
-    { statement: "Leading nutritionists assert that excessive sugar intake may benefit long-term health.", answer: true },
-    { statement: "Director James Cameron retires from filmmaking to pursue a career in ballet.", answer: false },
-    { statement: "Climate scientists report that global warming has plateaued and is now less urgent.", answer: false },
-    { statement: "Historians uncover evidence suggesting the Renaissance was politically fabricated.", answer: false },
-    { statement: "A physicist claims to have successfully developed a method for time travel.", answer: false }
+    { statement: "Tobacco companies knew about the health risks of smoking for decades but hid this information and aggressively marketed cigarettes, downplaying links to cancer and addiction.", answer: true }
   ];
 
-  let currentQuestionIndex = quizData.length - 1;
+  let currentQuestionIndex = 0;
   const startButton = document.getElementById('start-button');
   const questionContainer = document.getElementById('question-container');
   const questionElement = document.getElementById('question');
   const trueButton = document.getElementById('true-button');
   const falseButton = document.getElementById('false-button');
-  const feedbackElement = document.getElementById('feedback');
-  const previousQuestionsContainer = document.getElementById('previous-questions');
+  const incorrectQuestionsContainer = document.getElementById('incorrect-questions');
   const statementElement = document.getElementById('statement');
 
   startButton.addEventListener('click', startQuiz);
@@ -120,7 +140,7 @@
   }
 
   function showQuestion() {
-    if (currentQuestionIndex >= 0) {
+    if (currentQuestionIndex < quizData.length) {
       questionElement.textContent = quizData[currentQuestionIndex].statement;
     } else {
       questionElement.textContent = "Quiz Completed!";
@@ -135,10 +155,10 @@
       flashScreen('green');
     } else {
       flashScreen('red');
+      showIncorrectQuestion();
     }
-    showPreviousQuestion();
-    currentQuestionIndex--;
-    setTimeout(showQuestion, 200);
+    currentQuestionIndex++;
+    setTimeout(showQuestion, 400); // Wait for 0.4 seconds before showing the next question
   }
 
   function flashScreen(color) {
@@ -151,14 +171,14 @@
     setTimeout(() => {
       document.body.classList.remove('flash');
       document.body.style.animationName = '';
-    }, 200);
+    }, 400); // Flash duration increased to 0.4 seconds
   }
 
-  function showPreviousQuestion() {
-    const prevQuestion = document.createElement('div');
-    prevQuestion.classList.add('previous-question');
-    prevQuestion.textContent = quizData[currentQuestionIndex].statement;
-    previousQuestionsContainer.insertBefore(prevQuestion, previousQuestionsContainer.firstChild);
+  function showIncorrectQuestion() {
+    const incorrectQuestion = document.createElement('div');
+    incorrectQuestion.classList.add('incorrect-question');
+    incorrectQuestion.textContent = quizData[currentQuestionIndex].statement;
+    incorrectQuestionsContainer.appendChild(incorrectQuestion);
   }
 </script>
 
