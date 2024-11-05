@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cognitive Impasse</title>
@@ -245,7 +244,8 @@
             font-size: 18px;
         }
         
-        #end-screen button {
+        /* Provide Feedback Button */
+        #provide-feedback-button {
             padding: 10px 20px;
             border: none;
             background-color: #333;
@@ -257,8 +257,40 @@
             margin-top: 10px;
         }
         
-        #end-screen button:hover {
+        #provide-feedback-button:hover {
             background-color: #555;
+        }
+        
+        /* Success Screen */
+        #success-screen {
+            display: none;
+            text-align: center;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #success-screen h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #28a745; /* Green color to indicate success */
+        }
+        
+        #success-screen p {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        /* Optional: Add a link to Figshare */
+        #success-screen a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        #success-screen a:hover {
+            text-decoration: underline;
         }
         
         /* Modal Styles */
@@ -281,8 +313,10 @@
             padding: 20px;
             border-radius: 8px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .modal-content h3 {
@@ -290,14 +324,26 @@
             font-size: 20px;
         }
         
+        .modal-content form label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        
         .modal-content input[type="text"],
-        .modal-content input[type="email"] {
+        .modal-content input[type="email"],
+        .modal-content textarea {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
+            margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 14px;
+            resize: vertical;
+        }
+        
+        .modal-content textarea {
+            height: 100px;
         }
         
         .modal-content button {
@@ -309,6 +355,7 @@
             cursor: pointer;
             transition: background-color 0.3s;
             font-size: 14px;
+            margin-top: 10px;
         }
         
         .modal-content button:hover {
@@ -332,7 +379,7 @@
                 margin: 2px;
             }
             
-            .intro-navigation button, .answer-button, #end-screen button {
+            .intro-navigation button, .answer-button, #end-screen button, #provide-feedback-button {
                 width: 48%;
                 margin: 5px 1%;
                 font-size: 14px;
@@ -542,26 +589,49 @@
         <div id="end-screen">
             <h2>Quiz Completed!</h2>
             <p id="score"></p>
-            <button id="restart-button">Restart Quiz</button>
-            <button id="read-paper-button">Keep In Touch</button>
+            <!-- Removed Restart Quiz Button -->
+            <button id="provide-feedback-button">Provide Critical Feedback</button>
         </div>
         
-        <!-- Modal for Email Request -->
-        <div id="email-modal" class="modal">
+        <!-- Success Screen -->
+        <div id="success-screen">
+            <h2>Success!</h2>
+            <p>If you wish to stay updated, please follow on Figshare. You will be redirected shortly.</p>
+        </div>
+        
+        <!-- Modal for Feedback -->
+        <div id="feedback-modal" class="modal">
             <div class="modal-content">
-                <h3>Request Access to Future Publications</h3>
-                <p>Please enter your name and email to receive access to future discussions and updated papers:</p>
-                <form id="data-form" action="https://eo3cv4df6ukuz68.m.pipedream.net" method="POST">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" required><br><br>
-        
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required><br><br>
-        
-                    <!-- Hidden input to store quiz results -->
-                    <input type="hidden" id="quiz-results" name="quizResults">
-        
-                    <input type="submit" value="Send Data">
+                <h3>Quiz Feedback</h3>
+                <form id="feedback-form">
+                    <label><input type="checkbox" name="feedback" value="Mild discomfort or tension"> I noticed a mild discomfort or sense of tension while going through the quiz.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Defensive, annoyed, or amused"> I felt defensive, annoyed, or unexpectedly amused by certain sections of the quiz.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Disbelief or urge to dismiss"> I experienced disbelief or had an immediate urge to dismiss some of the information presented with just "no."</label><br>
+                    <label><input type="checkbox" name="feedback" value="Feeling of impending doom or guilt"> I experienced a subtle feeling of impending doom or guilt as I encountered challenging information.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Physical reactions like smirking or sighing"> I felt strong physical reactions, like smirking or sighing, as I processed conflicting information.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Frustrated or defensive"> I felt frustrated or defensive, finding myself wanting to reject certain statements immediately.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Growing cognitive resistance"> I sensed a growing cognitive resistance, feeling uneasy or slightly panicked at certain points.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Intense guilt or doom"> I began to feel a more intense sense of guilt or a deeper feeling of impending doom while continuing.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Overwhelming urge to stop"> I felt an overwhelming urge to stop the quiz, but I pushed myself to continue despite discomfort.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Massive feelings of guilt or doom"> I felt massive feelings of guilt or impending doom as the information continued to challenge my beliefs.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Wanted to quit but continued"> I reached a point where I wanted to quit, yet I powered through to reach the end of the quiz.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Physical symptoms like headache"> I experienced physical symptoms, such as a headache or mental fatigue, and found relief by listening to non-lyrical music with rapid, varied notes.</label><br>
+                    <label><input type="checkbox" name="feedback" value="Clear and understandable information"> I thought the information was presented in a clear and understandable way.</label><br>
+                    
+                    <!-- Checkbox to reveal email field -->
+                    <label for="subscribe"><input type="checkbox" id="subscribe" onclick="toggleEmailField()">I’d like to stay updated when new—open research material is released.</label><br>
+
+                    <!-- Email and Name Fields -->
+                    <div id="emailField" class="email-field">
+                        <label for="name">Name: <input type="text" name="name" id="name"></label><br>
+                        <label for="email">Email: <input type="email" name="email" id="email"></label><br>
+                    </div>
+
+                    <!-- Comments Field -->
+                    <label for="comments">Additional Comments (Max 500 words):</label><br>
+                    <textarea id="comments" name="comments" maxlength="3000" placeholder="Enter your comments here..."></textarea><br>
+                    
+                    <button type="submit">Submit Feedback</button>
                 </form>
             </div>
         </div>
@@ -615,8 +685,7 @@
             let score = 0;
             const userAnswers = []; // To store user's answers
 
-            const restartButton = document.getElementById('restart-button');
-            const readPaperButton = document.getElementById('read-paper-button');
+            const provideFeedbackButton = document.getElementById('provide-feedback-button');
             const questionContainer = document.getElementById('question-container');
             const introSlides = document.querySelectorAll('.intro-slide');
             const prevButton = document.getElementById('prev-button');
@@ -630,9 +699,9 @@
             const previousQuestionsContainer = document.getElementById('previous-questions');
             const endScreen = document.getElementById('end-screen');
             const scoreElement = document.getElementById('score');
-            const readPaperModal = document.getElementById('email-modal');
-            const dataForm = document.getElementById('data-form');
-            const quizResultsInput = document.getElementById('quiz-results');
+            const feedbackModal = document.getElementById('feedback-modal');
+            const feedbackForm = document.getElementById('feedback-form');
+            const successScreen = document.getElementById('success-screen');
 
             let currentIntroSlide = 0;
 
@@ -660,7 +729,7 @@
                     document.querySelector('.intro-navigation').style.display = 'none';
                     questionContainer.style.display = 'flex';
                     showQuestion();
-                    checkScreenWidth(); // Move this here to ensure mobile buttons are only shown during the quiz
+                    checkScreenWidth(); // Ensure mobile buttons are only shown during the quiz
                 }
             });
 
@@ -739,53 +808,82 @@
                 questionContainer.style.display = 'none';
                 endScreen.style.display = 'flex';
                 scoreElement.textContent = `You scored ${score} out of ${quizData.length}!`;
-
-                // Prepare quiz results as JSON string
-                const quizResults = JSON.stringify(userAnswers);
-                quizResultsInput.value = quizResults;
             }
 
-            // Restart Quiz
-            function restartQuiz() {
-                currentQuestionIndex = 0;
-                score = 0;
-                userAnswers.length = 0; // Clear the array
-                previousQuestionsContainer.innerHTML = '';
-                endScreen.style.display = 'none';
-                questionContainer.style.display = 'flex';
-                showQuestion();
-                checkScreenWidth();
-            }
-
-            // Handle "Read Full Paper" Button
-            readPaperButton.addEventListener('click', () => {
-                readPaperModal.style.display = 'flex';
+            // Handle "Provide Critical Feedback" Button
+            provideFeedbackButton.addEventListener('click', () => {
+                feedbackModal.style.display = 'flex';
             });
 
             // Handle Modal Submission
-            dataForm.addEventListener('submit', (event) => {
-                // Basic email validation
-                const emailInput = document.getElementById('email');
-                const email = emailInput.value.trim();
-                const nameInput = document.getElementById('name');
-                const name = nameInput.value.trim();
+            feedbackForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevent default form submission
 
-                if (!validateEmail(email)) {
-                    alert('Please enter a valid email address.');
-                    event.preventDefault(); // Prevent form submission
+                // Gather form data
+                const formData = new FormData(feedbackForm);
+                const feedback = formData.getAll('feedback');
+                const subscribe = formData.get('subscribe') === 'on';
+                const name = formData.get('name') || '';
+                const email = formData.get('email') || '';
+                const comments = formData.get('comments') || '';
+
+                // Validate if subscribe is checked
+                if (subscribe) {
+                    if (!validateEmail(email)) {
+                        alert('Please enter a valid email address.');
+                        return;
+                    }
+
+                    if (name.trim() === '') {
+                        alert('Please enter your name.');
+                        return;
+                    }
+                }
+
+                // Validate comments length (max 500 words)
+                const wordCount = comments.trim().split(/\s+/).filter(word => word.length > 0).length;
+                if (wordCount > 500) {
+                    alert('Please limit your comments to 500 words.');
                     return;
                 }
 
-                if (name === '') {
-                    alert('Please enter your name.');
-                    event.preventDefault(); // Prevent form submission
-                    return;
+                // Prepare data to send
+                const data = {
+                    feedback: feedback,
+                    subscribe: subscribe,
+                    name: name,
+                    email: email,
+                    comments: comments
+                };
+
+                try {
+                    // Send data to Pipedream
+                    const response = await fetch('https://eo3cv4df6ukuz68.m.pipedream.net', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        // Close the feedback modal
+                        feedbackModal.style.display = 'none';
+                        // Hide the end screen
+                        endScreen.style.display = 'none';
+                        // Show the success screen
+                        successScreen.style.display = 'flex';
+                        // Redirect to DOI after a short delay
+                        setTimeout(() => {
+                            window.location.href = 'https://doi.org/10.6084/m9.figshare.27367785';
+                        }, 3000); // 3 seconds delay
+                    } else {
+                        alert('There was an error submitting your feedback. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error submitting feedback:', error);
+                    alert('There was an error submitting your feedback. Please try again.');
                 }
-
-                // Optionally, you can add more validations here
-
-                // The quiz results are already set in the hidden input
-                // They will be sent along with the form data
             });
 
             // Validate Email Function
@@ -794,10 +892,16 @@
                 return re.test(String(email).toLowerCase());
             }
 
+            // Toggle Email Field Visibility
+            function toggleEmailField() {
+                const emailField = document.getElementById("emailField");
+                emailField.style.display = document.getElementById("subscribe").checked ? "block" : "none";
+            }
+
             // Close Modal when clicking outside the content
             window.addEventListener('click', (event) => {
-                if (event.target == readPaperModal) {
-                    readPaperModal.style.display = 'none';
+                if (event.target == feedbackModal) {
+                    feedbackModal.style.display = 'none';
                 }
             });
 
@@ -811,9 +915,6 @@
                     document.getElementById('buttons').style.display = 'flex';
                 }
             }
-
-            // Remove the initial check to prevent mobile buttons from showing during intro slides
-            // checkScreenWidth(); // Removed
 
             // Add Event Listener for Window Resize
             window.addEventListener('resize', () => {
@@ -830,7 +931,6 @@
             // Event Listeners for Quiz Buttons
             trueButton.addEventListener('click', () => checkAnswer(true));
             falseButton.addEventListener('click', () => checkAnswer(false));
-            restartButton.addEventListener('click', restartQuiz);
 
             // Initialize Navigation Buttons
             updateNavButtons();
